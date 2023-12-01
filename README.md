@@ -4,5 +4,5 @@ Answers to Advent of Code for 2023
 # Language
 Python
 
-#How to run
+# How to run
 Navigate to each day, and just run python main.py
