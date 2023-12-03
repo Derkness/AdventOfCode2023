@@ -53,12 +53,32 @@ def part_1():
                 break
     print(count)
 
-def get_connecting_numbers_in_line(line, connectingIndex):
+def get_connecting_numbers_in_line(line, connectingIndex, topOrBottom):
     numbers = [] # [number, startIndex (inclusive), endIndex (inclusive)]
+    inNumber = False
     for charIndex, char in enumerate(line):
         if (char.isdigit()):
-            numberString += char
-        else
+            if (not inNumber):
+                numbers.append([char, charIndex, len(line)-1])
+                inNumber = True
+            else:
+                numbers[-1][0] += char
+        else:
+            if (inNumber):
+                numbers[-1][2] = charIndex - 1
+                inNumber = False
+    return [number for number in numbers if filter_connecting_only(number, connectingIndex, topOrBottom)]
+
+def filter_connecting_only(value, connectingIndex, topOrBottom):
+    if (topOrBottom):
+        if (connectingIndex in range(value[1]-1, value[2]+2)):
+            return True
+    else:
+        if value[1] == connectingIndex + 1:
+            return True
+        if value[2] == connectingIndex - 1:
+            return True
+    return False
     
                 
 def part_2():
@@ -66,8 +86,21 @@ def part_2():
     count = 0
     for lineIndex, line in enumerate(lines):
         for charIndex, char in enumerate(line):
-            if char is "*":
+            if char == "*":
+                relatedLines = []
+                if (lineIndex > 0):
+                    relatedLines.extend(get_connecting_numbers_in_line(lines[lineIndex-1], charIndex, True))
+                    
+                relatedLines.extend(get_connecting_numbers_in_line(line, charIndex, False))
                 
+                if (lineIndex < len(lines)-1):
+                    relatedLines.extend(get_connecting_numbers_in_line(lines[lineIndex+1], charIndex, True))
+                    
+                if (len(relatedLines) == 2):
+                    count += int(relatedLines[0][0]) * int(relatedLines[1][0])
+    print(count)
+                
+                     
         
     
 if __name__ == "__main__":
