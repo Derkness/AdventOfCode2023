@@ -1,6 +1,3 @@
-import math
-
-
 def get_input():
     lines=[]
     with open("input.txt", "r") as file:
