@@ -122,8 +122,24 @@ def part_2():
         for seed in expandedSeeds:
             locations.append(get_location_from_seed(int(seed), "seed"))
         closest = min(locations)
-        print(closest)
+        print(closest, "from", pair[0])
     
 
 if __name__ == "__main__":
     part_2()
+
+# too high:
+# 374323335 (126821306)
+# 239072070 (541904540)
+# 942540950 (654599767)
+# 4225564962 (919015581)
+# 1254705509 (3945616935)
+# 1312864011 from 2347782594
+# 200072070
+
+# Unsure why
+# 127158107 (from 2906961955)
+# 70478641 from 1600322402
+
+# WINNER!!!!!!!!!!!
+# 56931769 from 3411274151
