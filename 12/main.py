@@ -1,3 +1,5 @@
+import re
+from functools import cache
 from itertools import product
 
 # biggest possible chain is '???????????????'
@@ -18,6 +20,9 @@ RULE_MAP = {
     '14': [''.join(x) for x in (product('.?', repeat=14))],
     '15': [''.join(x) for x in (product('.?', repeat=15))]
 }
+# RULE_MAP = {str(i): [''.join(x) for x in product('.?', repeat=i)] for i in range(1, 76)}
+
+print('prepped map')
 
 
 def get_input():
@@ -122,8 +127,15 @@ def part_1():
 
 # biggest possible chain is '???????????????'
 def get_possible_rules(springs):
-    rules = []
-    
+     # Split the input string into placeholder and non-placeholder parts
+    parts = re.split(r'(\?+)', springs)
+
+    # For each part, if it's a placeholder, get the corresponding value from RULE_MAP
+    parts = [RULE_MAP[str(len(part))] if part.startswith('?') else [part] for part in parts]
+
+    # Generate all combinations
+    return [''.join(combination) for combination in product(*parts)]
+
     # e.g.
     # ..#.#.#?????.#.#
     # could be
@@ -134,8 +146,6 @@ def get_possible_rules(springs):
     # [1, 1, 1, 1, 1]
     # [1, 1, 1, 1, 1]
     
-    
-
 def is_impossible(line):
     [springs, rules] = line.split(" ")
     possibleRules = get_possible_rules(springs)
@@ -150,7 +160,7 @@ def is_impossible(line):
     #         return True
     
     # return False
-    
+@cache
 def get_combinations_2(line):
     if '?' not in line:
         if is_valid(line):
@@ -158,8 +168,8 @@ def get_combinations_2(line):
         else:
             return 0
     else:
-        if is_impossible(line):
-            return 0
+        # if is_impossible(line):
+            # return 0
         withBroken = line.replace('?','.', 1)
         withWorking = line.replace('?','#', 1)
         return get_combinations_2(withBroken) + get_combinations_2(withWorking)
