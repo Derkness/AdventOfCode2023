@@ -41,10 +41,9 @@ def get_input_2():
             strippedLine = line.strip()
             if (len(strippedLine) > 0):
                 [springs, rules] = strippedLine.split()
-                newSprings = '?'.join([springs]*5)
-                newRules = ','.join([rules] * 5)
-                newLine = newSprings + " " + newRules
-                lines.append(newLine)
+                newSprings = '?'.join([springs]*5) + '.' # Add an extra dot at the end so that all clusters will 'end'
+                newRules = tuple([int(x) for x in rules.split(',')]) * 5
+                lines.append([newSprings, newRules])
     return lines
 
 # def is_valid(line): <-------- Maybe use this for tree pruning if part 2 calls for it
@@ -161,25 +160,35 @@ def is_impossible(line):
     
     # return False
 @cache
-def get_combinations_2(line):
-    if '?' not in line:
-        if is_valid(line):
+def get_combinations_2(springs, rules, lengthOfCurrentGroup):
+    if len(springs) == 0:
+        if len(rules) == 0 and lengthOfCurrentGroup == 0:
             return 1
+        return 0
+    count = 0
+    waveform = ['.', '#'] if springs[0] == '?' else springs[0]
+    for collapse in waveform:
+        if collapse == '#': # continue the current group
+            count += get_combinations_2(springs[1:], rules, lengthOfCurrentGroup + 1)
         else:
-            return 0
-    else:
-        # if is_impossible(line):
-            # return 0
-        withBroken = line.replace('?','.', 1)
-        withWorking = line.replace('?','#', 1)
-        return get_combinations_2(withBroken) + get_combinations_2(withWorking)
+            if lengthOfCurrentGroup != 0: # . End the current group
+                if rules and rules[0] == lengthOfCurrentGroup:
+                    count += get_combinations_2(springs[1:], rules[1:], 0)
+            else:  # Just move on. Still not in a group, but nothing changes here
+                count += get_combinations_2(springs[1:], rules, 0)
+    return count
+    # if is_impossible(line):
+        # return 0
+    # withBroken = line.replace('?','.', 1)
+    # withWorking = line.replace('?','#', 1)
+    # return get_combinations_2(withBroken) + get_combinations_2(withWorking)
     
 def part_2():
     lines = get_input_2()
     count = 0
     for line in lines:
-        count += get_combinations_2(line)
-        print(count)
+        [springs, rules] = line
+        count += get_combinations_2(springs, rules, 0)
     print(count)
     
 if __name__ == "__main__":
