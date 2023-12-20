@@ -152,8 +152,6 @@ def part_2():
     while non_terminated(groups):
         for key, value in workflowMap.items():
             groups = split_groups(key, value, groups)
-            # print(groups)
-    # print(groups)
     count = 0
     for group in groups:
         if group.state == 'A':
